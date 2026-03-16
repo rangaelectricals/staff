@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Staff List — RANGA ELECTRICALS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.22/dist/full.min.css" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } };</script>
+  <link rel="stylesheet" href="assets/css/app.css" />
+</head>
+
+<body class="min-h-screen  font-sans">
+  <div class="drawer lg:drawer-open">
+    <input id="drawer-toggle" type="checkbox" class="drawer-toggle" />
+
+    <!-- ── Main Content ─────────────────────────────── -->
+    <div class="drawer-content flex flex-col min-h-screen">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <label for="drawer-toggle" class="btn btn-sm btn-ghost lg:hidden">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </label>
+        <span class="text-slate-600 font-semibold text-sm hidden lg:block">RANGA ELECTRICALS</span>
+        <div class="flex-1"></div>
+        <a href="add-staff.html" class="btn btn-brand btn-sm gap-2">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+          </svg>
+          Add Staff
+        </a>
+      </header>
+
+      <!-- Page Content -->
+      <main class="flex-1 p-4 md:p-6 lg:p-8 space-y-6">
+
+        <!-- Hero -->
+        <div class="page-hero flex items-center gap-4">
+          <div class="hero-blob-1"></div>
+          <div class="hero-blob-2"></div>
+          <div class="hero-blob-3"></div>
+          <div class="hero-icon relative z-10">
+            <svg class="w-7 h-7 " viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+            </svg>
+          </div>
+          <div class="relative z-10">
+            <h1 class="text-2xl md:text-3xl font-extrabold  tracking-tight">Staff List</h1>
+            <p class="text-slate-600 font-semibold text-sm mt-1">Search, browse and manage all staff records</p>
+          </div>
+        </div>
+
+        <!-- Search Filters -->
+        <div class="sys-card animate-fadeIn">
+          <div class="sys-card-header">
+            <div class="card-icon bg-blue-50"><svg class="w-5 h-5 text-blue-500" viewBox="0 0 24 24"
+                fill="currentColor">
+                <path
+                  d="M15.5 14h-.79l-.28-.27a6.47 6.47 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5-3.12 0-5.63 2.51-5.63 5.63s2.51 5.63 5.63 5.63c1.66 0 3.14-.69 4.2-1.8l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+              </svg></div>
+            <h3>Search &amp; Filter</h3>
+          </div>
+          <div class="sys-card-body grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="form-control">
+              <label class="label py-1"><span
+                  class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">Name</span></label>
+              <input id="search-name" type="text" class="input input-bordered input-sm" placeholder="Search by name…" />
+            </div>
+            <div class="form-control">
+              <label class="label py-1"><span
+                  class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">Mobile</span></label>
+              <input id="search-mobile" type="text" class="input input-bordered input-sm"
+                placeholder="Search by mobile…" />
+            </div>
+            <div class="form-control">
+              <label class="label py-1"><span
+                  class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">Designation</span></label>
+              <input id="search-designation" type="text" class="input input-bordered input-sm"
+                placeholder="Driver / Electrician…" />
+            </div>
+            <div class="flex items-end gap-2">
+              <button id="btn-search" class="btn btn-brand btn-sm flex-1 gap-1">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 10-1.08 1.08l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                </svg>
+                Search
+              </button>
+              <button id="btn-reset" class="btn btn-outline btn-sm flex-1">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desktop Table -->
+        <div class="sys-card animate-fadeIn delay-100 hidden md:block overflow-hidden">
+          <div class="sys-card-header">
+            <div class="card-icon "><svg class="w-5 h-5 text-slate-700 font-medium" viewBox="0 0 24 24"
+                fill="currentColor">
+                <path d="M3 5h18v2H3V5zm0 7h18v-2H3v2zm0 7h18v-2H3v2z" />
+              </svg></div>
+            <h3>Staff Records</h3>
+            <span class="ml-auto text-xs text-slate-600 font-semibold" id="pagination-info">—</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="sys-table">
+              <thead>
+                <tr>
+                  <th>Photo</th>
+                  <th>Name</th>
+                  <th>Mobile</th>
+                  <th>Designation</th>
+                  <th>Blood</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="staff-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Mobile Cards -->
+        <div id="staff-card-list" class="grid gap-3 md:hidden"></div>
+
+        <!-- Pagination -->
+        <div class="flex flex-wrap items-center justify-between gap-3 animate-fadeIn delay-200">
+          <span class="text-sm text-slate-700 font-medium md:hidden" id="pagination-info-mobile">—</span>
+          <!-- Dynamic Page Controls -->
+          <div class="join ml-auto overflow-x-auto shadow-sm" id="pagination-controls">
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- ── Sidebar ────────────────────────────────────── -->
+    <div class="drawer-side z-50">
+      <label for="drawer-toggle" class="drawer-overlay"></label>
+      <aside class="sidebar">
+        <div class="sidebar-logo flex items-center gap-3">
+          <div class="logo-mark bg-yellow-100 flex justify-center items-center rounded-lg"
+            style="width:32px;height:32px;">
+            <svg class="w-5 h-5 text-yellow-600" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M13 3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <div>
+            <div class="logo-text">RANGA ELECTRICALS</div>
+            <div class="logo-sub">Workspace</div>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <div class="sidebar-section-label">Main Menu</div>
+          <a href="dashboard.html" class="sidebar-item">
+            <div class="nav-icon"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
+              </svg></div>
+            Dashboard
+          </a>
+          <a href="staff-list.html" class="sidebar-item active">
+            <div class="nav-icon"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+              </svg></div>
+            Staff List
+          </a>
+          <a href="add-staff.html" class="sidebar-item">
+            <div class="nav-icon"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+              </svg></div>
+            Add Staff
+          </a>
+        </nav>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Docs Modal -->
+  <dialog id="docs-modal" class="modal">
+    <div class="modal-box max-w-md rounded-2xl">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-orange-500" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 2H5c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 4h6v2H9V4z" />
+          </svg>
+        </div>
+        <h3 class="font-bold text-lg text-slate-800">Staff Documents</h3>
+      </div>
+      <div class="space-y-3" id="docs-modal-content"></div>
+      <div class="modal-action mt-5">
+        <form method="dialog"><button class="btn btn-outline btn-sm rounded-xl">Close</button></form>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>close</button></form>
+  </dialog>
+
+  <div id="toast" class="toast toast-end z-50"></div>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/drive-links.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/list-page.js"></script>
+</body>
+
+</html>

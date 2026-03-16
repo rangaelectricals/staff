@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Staff — RANGA ELECTRICALS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.22/dist/full.min.css" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } };</script>
+  <link rel="stylesheet" href="assets/css/app.css" />
+</head>
+
+<body class="min-h-screen  font-sans">
+  <div class="drawer lg:drawer-open">
+    <input id="drawer-toggle" type="checkbox" class="drawer-toggle" />
+
+    <!-- ── Main Content ─────────────────────────────── -->
+    <div class="drawer-content flex flex-col min-h-screen">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <label for="drawer-toggle" class="btn btn-sm btn-ghost lg:hidden">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </label>
+        <span class="text-slate-600 font-semibold text-sm hidden lg:block">RANGA ELECTRICALS</span>
+        <div class="flex-1"></div>
+        <a href="staff-list.html" class="btn btn-outline btn-sm gap-2">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+          </svg>
+          Back to List
+        </a>
+      </header>
+
+      <!-- Page Content -->
+      <main class="flex-1 p-4 md:p-6 lg:p-8 space-y-6">
+
+        <!-- Hero -->
+        <div class="page-hero flex items-center gap-4">
+          <div class="hero-blob-1"></div>
+          <div class="hero-blob-2"></div>
+          <div class="hero-blob-3"></div>
+          <div class="hero-icon relative z-10">
+            <svg class="w-7 h-7 " viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+          </div>
+          <div class="relative z-10">
+            <h1 id="page-title" class="text-2xl md:text-3xl font-extrabold  tracking-tight">Add New Staff</h1>
+            <p class="text-slate-600 font-semibold text-sm mt-1">Fill in staff details — saved directly to Google Sheets
+            </p>
+          </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="sys-card animate-fadeIn max-w-3xl">
+
+          <form id="staff-form">
+
+            <!-- ── Personal Information ────────────────── -->
+            <div class="sys-card-header">
+              <div class="card-icon bg-blue-50"><svg class="w-5 h-5 text-blue-500" viewBox="0 0 24 24"
+                  fill="currentColor">
+                  <path
+                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                </svg></div>
+              <h3>Personal Information</h3>
+            </div>
+            <div class="sys-card-body grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-control md:col-span-2">
+                <label class="label py-1"><span
+                    class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">Full
+                    Name
+                    *</span></label>
+                <input name="fullName" required class="input input-bordered" placeholder="Enter full name" />
+              </div>
+              <div class="form-control">
+                <label class="label py-1"><span
+                    class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">Date of
+                    Birth
+                    *</span></label>
+                <input type="date" name="dob" required class="input input-bordered" />
+              </div>
+              <div class="form-control">
+                <label class="label py-1"><span
+                    class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">Mobile
+                    *</span></label>
+                <input name="mobile" required class="input input-bordered" placeholder="10-digit mobile number" />
+              </div>
+              <div class="form-control md:col-span-2">
+                <label class="label py-1"><span
+                    class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">Address
+                    *</span></label>
+                <textarea name="address" required class="textarea textarea-bordered" rows="2"
+                  placeholder="Full address"></textarea>
+              </div>
+            </div>
+
+            <div class="border-t border-slate-100"></div>
+
+            <!-- ── Identity Documents ──────────────────── -->
+            <div class="sys-card-header">
+              <div class="card-icon bg-green-50"><svg class="w-5 h-5 text-green-500" viewBox="0 0 24 24"
+                  fill="currentColor">
+                  <path d="M9 1v2H5v16h14V3h-4V1H9zm0 4h6v2H9V5z" />
+                </svg></div>
+              <h3>Identity Documents</h3>
+            </div>
+            <div class="sys-card-body grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-control">
+                <label class="label py-1"><span
+                    class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">Aadhaar
+                    Number
+                    *</span></label>
+                <input name="aadhaarNumber" required class="input input-bordered" placeholder="12-digit Aadhaar" />
+              </div>
+              <div class="form-control">
+                <label class="label py-1"><span
+                    class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">Driving
+                    License
+                    *</span></label>
+                <input name="drivingLicense" required class="input input-bordered" placeholder="License number" />
+              </div>
+            </div>
+
+            <div class="border-t border-slate-100"></div>
+
+            <!-- ── Emergency Contact ───────────────────── -->
+            <div class="sys-card-header">
+              <div class="card-icon bg-orange-50"><svg class="w-5 h-5 text-orange-500" viewBox="0 0 24 24"
+                  fill="currentColor">
+                  <path
+                    d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                </svg></div>
+              <h3>Emergency Contact</h3>
+            </div>
+            <div class="sys-card-body grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-control">
+                <label class="label py-1"><span
+                    class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">Contact
+                    Name
+                    *</span></label>
+                <input name="emergencyContactName" required class="input input-bordered" placeholder="Full name" />
+              </div>
+              <div class="form-control">
+                <label class="label py-1"><span
+                    class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">Contact
+                    Mobile
+                    *</span></label>
+                <input name="emergencyMobile" required class="input input-bordered" placeholder="10-digit mobile" />
+              </div>
+            </div>
+
+            <div class="border-t border-slate-100"></div>
+
+            <!-- ── Additional Info ────────────────────── -->
+            <div class="sys-card-header">
+              <div class="card-icon bg-purple-50"><svg class="w-5 h-5 text-purple-500" viewBox="0 0 24 24"
+                  fill="currentColor">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                </svg></div>
+              <h3>Additional Information</h3>
+            </div>
+            <div class="sys-card-body grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-control">
+                <label class="label py-1"><span
+                    class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">Blood
+                    Group
+                    *</span></label>
+                <input name="bloodGroup" required class="input input-bordered" placeholder="e.g. O+, A-, B+" />
+              </div>
+              <div class="form-control">
+                <label class="label py-1"><span
+                    class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">Designation
+                    *</span></label>
+                <input name="designation" required class="input input-bordered" placeholder="Driver / Electrician" />
+              </div>
+            </div>
+
+            <div class="border-t border-slate-100"></div>
+
+            <!-- ── Document Links ──────────────────────── -->
+            <div class="sys-card-header">
+              <div class="card-icon bg-rose-50"><svg class="w-5 h-5 text-rose-500" viewBox="0 0 24 24"
+                  fill="currentColor">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-8-6z" />
+                </svg></div>
+              <h3>Document Links <span class="text-xs font-normal text-slate-600 font-semibold">(Google Drive
+                  URLs)</span></h3>
+            </div>
+            <div class="sys-card-body grid grid-cols-1 gap-4">
+              <!-- Photo Input -->
+              <div class="form-control">
+                <label class="label py-1"><span
+                    class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">Photo
+                    URL
+                    *</span></label>
+                <div class="flex gap-4 items-start">
+                  <div
+                    class="w-16 h-16 rounded-xl  border border-slate-200 flex-shrink-0 flex items-center justify-center overflow-hidden relative">
+                    <svg id="icon-photo" class="w-6 h-6 text-slate-300" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+                    </svg>
+                    <img id="preview-photo" class="absolute inset-0 w-full h-full object-cover hidden" alt="Preview" />
+                  </div>
+                  <input name="photo" id="input-photo" required class="input input-bordered flex-1"
+                    placeholder="https://drive.google.com/file/d/…" />
+                </div>
+              </div>
+
+              <!-- Aadhaar Input -->
+              <div class="form-control">
+                <label class="label py-1"><span
+                    class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">Aadhaar
+                    Image URL
+                    *</span></label>
+                <div class="flex gap-4 items-start">
+                  <div
+                    class="w-16 h-16 rounded-xl  border border-slate-200 flex-shrink-0 flex items-center justify-center overflow-hidden relative">
+                    <svg id="icon-aadhaarImage" class="w-6 h-6 text-slate-300" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+                    </svg>
+                    <img id="preview-aadhaarImage" class="absolute inset-0 w-full h-full object-cover hidden"
+                      alt="Preview" />
+                  </div>
+                  <input name="aadhaarImage" id="input-aadhaarImage" required class="input input-bordered flex-1"
+                    placeholder="https://drive.google.com/file/d/…" />
+                </div>
+              </div>
+
+              <!-- License Input -->
+              <div class="form-control">
+                <label class="label py-1"><span
+                    class="label-text text-xs font-semibold text-slate-700 font-medium uppercase tracking-wide">License
+                    Image URL
+                    *</span></label>
+                <div class="flex gap-4 items-start">
+                  <div
+                    class="w-16 h-16 rounded-xl  border border-slate-200 flex-shrink-0 flex items-center justify-center overflow-hidden relative">
+                    <svg id="icon-licenseImage" class="w-6 h-6 text-slate-300" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+                    </svg>
+                    <img id="preview-licenseImage" class="absolute inset-0 w-full h-full object-cover hidden"
+                      alt="Preview" />
+                  </div>
+                  <input name="licenseImage" id="input-licenseImage" required class="input input-bordered flex-1"
+                    placeholder="https://drive.google.com/file/d/…" />
+                </div>
+              </div>
+            </div>
+
+            <!-- ── Actions ─────────────────────────────── -->
+            <div class="sys-card-body border-t border-slate-100 flex flex-wrap gap-3 pt-5">
+              <button id="btn-submit" type="submit" class="btn btn-brand gap-2">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                </svg>
+                <span id="btn-submit-label">Submit Staff</span>
+              </button>
+              <a href="staff-list.html" class="btn btn-outline gap-2">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                </svg>
+                Cancel
+              </a>
+            </div>
+
+          </form>
+        </div>
+      </main>
+    </div>
+
+    <!-- ── Sidebar ────────────────────────────────────── -->
+    <div class="drawer-side z-50">
+      <label for="drawer-toggle" class="drawer-overlay"></label>
+      <aside class="sidebar">
+        <div class="sidebar-logo flex items-center gap-3">
+          <div class="logo-mark bg-yellow-100 flex justify-center items-center rounded-lg"
+            style="width:32px;height:32px;">
+            <svg class="w-5 h-5 text-yellow-600" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M13 3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <div>
+            <div class="logo-text">RANGA ELECTRICALS</div>
+            <div class="logo-sub">Workspace</div>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <div class="sidebar-section-label">Main Menu</div>
+          <a href="dashboard.html" class="sidebar-item">
+            <div class="nav-icon"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
+              </svg></div>
+            Dashboard
+          </a>
+          <a href="staff-list.html" class="sidebar-item">
+            <div class="nav-icon"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+              </svg></div>
+            Staff List
+          </a>
+          <a href="add-staff.html" class="sidebar-item active">
+            <div class="nav-icon"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+              </svg></div>
+            Add Staff
+          </a>
+        </nav>
+      </aside>
+    </div>
+  </div>
+
+  <div id="toast" class="toast toast-end z-50"></div>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/add-page.js"></script>
+</body>
+
+</html>
