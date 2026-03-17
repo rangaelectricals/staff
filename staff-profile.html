@@ -15,21 +15,31 @@
 </head>
 
 <body class="min-h-screen  font-sans">
-  <div class="drawer lg:drawer-open">
-    <input id="drawer-toggle" type="checkbox" class="drawer-toggle" />
-
-    <!-- ── Main Content ─────────────────────────────── -->
-    <div class="drawer-content flex flex-col min-h-screen">
+  <div class="min-h-screen flex flex-col">
 
       <!-- Topbar -->
       <header class="topbar">
-        <label for="drawer-toggle" class="btn btn-sm btn-ghost lg:hidden">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </label>
-        <span class="text-slate-600 font-semibold text-sm hidden lg:block">RANGA ELECTRICALS</span>
+        <span class="topbar-brand">RANGA ELECTRICALS</span>
         <div class="flex-1"></div>
+        <nav class="topbar-nav" aria-label="Primary">
+          <a href="dashboard.html" class="topbar-link">Dashboard</a>
+          <a href="staff-list.html" class="topbar-link active">Staff List</a>
+          <a href="add-staff.html" class="topbar-link">Add Staff</a>
+        </nav>
+        <details class="mobile-nav">
+          <summary class="mobile-nav-toggle" aria-label="Open navigation menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </summary>
+          <nav class="mobile-nav-panel" aria-label="Mobile Primary">
+            <a href="dashboard.html" class="mobile-nav-link">Dashboard</a>
+            <a href="staff-list.html" class="mobile-nav-link active">Staff List</a>
+            <a href="add-staff.html" class="mobile-nav-link">Add Staff</a>
+          </nav>
+        </details>
         <a href="staff-list.html" class="btn btn-outline btn-sm gap-2">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
@@ -60,7 +70,7 @@
         </div>
 
         <!-- Profile Layout -->
-        <div class="grid gap-5 lg:grid-cols-3">
+        <div class="grid gap-5 lg:grid-cols-3 lg:items-start">
 
           <!-- ── Left Card: Photo + Actions ─────────────── -->
           <div class="sys-card animate-slideInLeft flex flex-col">
@@ -188,48 +198,6 @@
           </div>
         </div>
       </main>
-    </div>
-
-    <!-- ── Sidebar ────────────────────────────────────── -->
-    <div class="drawer-side z-50">
-      <label for="drawer-toggle" class="drawer-overlay"></label>
-      <aside class="sidebar">
-        <div class="sidebar-logo flex items-center gap-3">
-          <div class="logo-mark bg-yellow-100 flex justify-center items-center rounded-lg"
-            style="width:32px;height:32px;">
-            <svg class="w-5 h-5 text-yellow-600" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M13 3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <div>
-            <div class="logo-text">RANGA ELECTRICALS</div>
-            <div class="logo-sub">Workspace</div>
-          </div>
-        </div>
-        <nav class="sidebar-nav">
-          <div class="sidebar-section-label">Main Menu</div>
-          <a href="dashboard.html" class="sidebar-item">
-            <div class="nav-icon"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
-              </svg></div>
-            Dashboard
-          </a>
-          <a href="staff-list.html" class="sidebar-item">
-            <div class="nav-icon"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-              </svg></div>
-            Staff List
-          </a>
-          <a href="add-staff.html" class="sidebar-item">
-            <div class="nav-icon"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-              </svg></div>
-            Add Staff
-          </a>
-        </nav>
-      </aside>
-    </div>
   </div>
 
   <!-- PDF Loading Overlay -->

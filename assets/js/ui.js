@@ -1,4 +1,6 @@
 (function () {
+  const BUTTON_TEXT_CACHE = new WeakMap();
+
   function showToast(message, type) {
     const root = document.getElementById("toast");
     if (!root) return;
@@ -12,6 +14,45 @@
     setTimeout(() => {
       alert.remove();
     }, 3000);
+  }
+
+  function setButtonLoading(button, isLoading, loadingText) {
+    if (!button) return;
+
+    if (isLoading) {
+      if (!BUTTON_TEXT_CACHE.has(button)) {
+        BUTTON_TEXT_CACHE.set(button, button.innerHTML);
+      }
+      button.disabled = true;
+      button.classList.add("loading");
+      button.classList.add("opacity-80");
+      if (loadingText) button.textContent = loadingText;
+      return;
+    }
+
+    button.disabled = false;
+    button.classList.remove("loading");
+    button.classList.remove("opacity-80");
+    if (BUTTON_TEXT_CACHE.has(button)) {
+      button.innerHTML = BUTTON_TEXT_CACHE.get(button);
+      BUTTON_TEXT_CACHE.delete(button);
+    }
+  }
+
+  function setFieldError(input, errorMessage) {
+    if (!input) return;
+    input.classList.add("input-error");
+    const targetId = input.dataset.errorTarget;
+    const target = targetId ? document.getElementById(targetId) : null;
+    if (target) target.textContent = errorMessage || "";
+  }
+
+  function clearFieldError(input) {
+    if (!input) return;
+    input.classList.remove("input-error");
+    const targetId = input.dataset.errorTarget;
+    const target = targetId ? document.getElementById(targetId) : null;
+    if (target) target.textContent = "";
   }
 
   function getQueryParam(key) {
@@ -55,5 +96,14 @@
     return dateStr;
   }
 
-  window.appUi = { showToast, getQueryParam, debounce, safe, formatDate };
+  window.appUi = {
+    showToast,
+    getQueryParam,
+    debounce,
+    safe,
+    formatDate,
+    setButtonLoading,
+    setFieldError,
+    clearFieldError,
+  };
 })();

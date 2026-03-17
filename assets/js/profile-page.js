@@ -17,20 +17,31 @@
     ];
 
     root.innerHTML = docs
-      .filter((doc) => doc.url && doc.url.trim()) // Only show if URL exists
       .map((doc) => {
-        const preview = window.driveLinks.toPreviewUrl(doc.url);
-        const download = window.driveLinks.toDownloadUrl(doc.url);
-        const share = window.driveLinks.toShareUrl(doc.url);
-        const isValid = preview && preview !== doc.url && download && download !== doc.url;
+        const rawUrl = String(doc.url || "").trim();
+        const hasAttachment = Boolean(rawUrl);
+        const preview = hasAttachment ? window.driveLinks.toPreviewUrl(rawUrl) : "";
+        const download = hasAttachment ? window.driveLinks.toDownloadUrl(rawUrl) : "";
+        const share = hasAttachment ? window.driveLinks.toShareUrl(rawUrl) : "";
+        const isValid =
+          hasAttachment &&
+          preview &&
+          preview !== rawUrl &&
+          download &&
+          download !== rawUrl;
+
         return `<div class="card bg-base-200 border border-base-300">
           <div class="card-body p-3">
             <h4 class="font-semibold">${doc.label}</h4>
-            <div class="flex flex-wrap gap-2">
-              <a class="btn btn-xs ${!isValid ? 'btn-disabled opacity-50 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 text-white'}" href="${isValid ? preview : '#'}" target="_blank" rel="noopener" ${!isValid ? 'onclick="return false"' : ''}>Preview</a>
-              <a class="btn btn-xs ${!isValid ? 'btn-disabled opacity-50 cursor-not-allowed' : 'bg-slate-600 hover:bg-slate-700 text-white'}" href="${isValid ? download : '#'}" target="_blank" rel="noopener noreferrer" ${!isValid ? 'onclick="return false"' : ''}>Download</a>
-              <button class="btn btn-xs ${!isValid ? 'btn-disabled opacity-50 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600 text-white'}" data-share="${share}" ${!isValid ? 'disabled' : ''}">Share</button>
-            </div>
+            ${
+              isValid
+                ? `<div class="flex flex-wrap gap-2">
+                    <a class="btn btn-xs bg-blue-500 hover:bg-blue-600 text-white" href="${preview}" target="_blank" rel="noopener">Preview</a>
+                    <a class="btn btn-xs bg-slate-600 hover:bg-slate-700 text-white" href="${download}" target="_blank" rel="noopener noreferrer">Download</a>
+                    <button class="btn btn-xs bg-green-500 hover:bg-green-600 text-white" data-share="${share}">Share</button>
+                  </div>`
+                : `<p class="text-sm text-slate-500 font-medium">No Attachments</p>`
+            }
           </div>
         </div>`;
       })

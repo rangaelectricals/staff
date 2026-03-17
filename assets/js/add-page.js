@@ -1,6 +1,25 @@
 (function () {
   let editingId = null;
 
+  function isDriveLink(value) {
+    if (!value) return true;
+    const fileId = window.driveLinks ? window.driveLinks.extractFileId(value) : "";
+    return Boolean(fileId);
+  }
+
+  function clearFormErrors(form) {
+    if (!form) return;
+    form.querySelectorAll("[data-error-target]").forEach((input) => {
+      window.appUi.clearFieldError(input);
+    });
+  }
+
+  function setInputError(form, fieldName, message) {
+    const input = form?.elements?.[fieldName];
+    if (!input) return;
+    window.appUi.setFieldError(input, message);
+  }
+
   function getThumbUrl(driveUrl, size = 200) {
     if (!driveUrl) return "";
     const id = window.driveLinks ? window.driveLinks.extractFileId(driveUrl) : null;
@@ -35,6 +54,7 @@
   let updatePhotoPreview, updateAadhaarPreview, updateLicensePreview;
 
   function validate(data) {
+    const errors = {};
     const required = [
       "fullName",
       "dob",
@@ -46,22 +66,37 @@
       "emergencyMobile",
       "bloodGroup",
       "designation",
-      "photo",
-      "aadhaarImage",
-      "licenseImage",
     ];
 
     for (const key of required) {
       if (!data[key]) {
-        throw new Error(`Field ${key} is required`);
+        errors[key] = "This field is required";
       }
     }
 
     if (!/^\d{10}$/.test(String(data.mobile))) {
-      throw new Error("Mobile must be 10 digits");
+      errors.mobile = "Mobile must be 10 digits";
     }
     if (!/^\d{10}$/.test(String(data.emergencyMobile))) {
-      throw new Error("Emergency mobile must be 10 digits");
+      errors.emergencyMobile = "Emergency mobile must be 10 digits";
+    }
+    if (!/^\d{12}$/.test(String(data.aadhaarNumber))) {
+      errors.aadhaarNumber = "Aadhaar must be 12 digits";
+    }
+    if (!isDriveLink(data.photo)) {
+      errors.photo = "Enter a valid Google Drive link";
+    }
+    if (!isDriveLink(data.aadhaarImage)) {
+      errors.aadhaarImage = "Enter a valid Google Drive link";
+    }
+    if (!isDriveLink(data.licenseImage)) {
+      errors.licenseImage = "Enter a valid Google Drive link";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      const err = new Error("Please fix highlighted fields");
+      err.fieldErrors = errors;
+      throw err;
     }
   }
 
@@ -124,7 +159,8 @@
     if (!id) return;
 
     editingId = id;
-    document.getElementById("btn-submit").textContent = "Update Staff";
+    const submitLabel = document.getElementById("btn-submit-label");
+    if (submitLabel) submitLabel.textContent = "Update Staff";
 
     const heading = document.querySelector("h1");
     if (heading) heading.textContent = "Edit Staff";
@@ -147,7 +183,8 @@
     const btn = document.getElementById("btn-submit");
 
     try {
-      btn.disabled = true;
+      clearFormErrors(form);
+      window.appUi.setButtonLoading(btn, true, "Saving...");
       const payload = formToPayload(form);
       validate(payload);
       if (editingId) {
@@ -162,14 +199,25 @@
         window.location.href = "staff-list.html";
       }, 900);
     } catch (error) {
+      if (error.fieldErrors) {
+        Object.entries(error.fieldErrors).forEach(([field, message]) => {
+          setInputError(form, field, message);
+        });
+      }
       window.appUi.showToast(error.message, "error");
     } finally {
-      btn.disabled = false;
+      window.appUi.setButtonLoading(btn, false);
     }
   }
 
   if (window.location.pathname.endsWith("add-staff.html")) {
-    document.getElementById("staff-form")?.addEventListener("submit", onSubmit);
+    const form = document.getElementById("staff-form");
+    form?.addEventListener("submit", onSubmit);
+
+    form?.querySelectorAll("[data-error-target]").forEach((input) => {
+      input.addEventListener("input", () => window.appUi.clearFieldError(input));
+      input.addEventListener("change", () => window.appUi.clearFieldError(input));
+    });
 
     updatePhotoPreview = setupPreview("photo");
     updateAadhaarPreview = setupPreview("aadhaarImage");
