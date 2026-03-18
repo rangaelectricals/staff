@@ -1,6 +1,50 @@
 (function () {
   let currentStaff = null;
 
+  function splitName(fullName) {
+    const cleanName = String(fullName || "").trim();
+    if (!cleanName) {
+      return { firstName: "", lastName: "" };
+    }
+
+    const chunks = cleanName.split(/\s+/);
+    return {
+      firstName: chunks[0] || "",
+      lastName: chunks.length > 1 ? chunks.slice(1).join(" ") : "",
+    };
+  }
+
+  function getElementText(id) {
+    const el = document.getElementById(id);
+    if (!el) return "";
+    return String(el.textContent || "").trim();
+  }
+
+  async function copyFieldValue(targetId, fieldLabel) {
+    const value = getElementText(targetId);
+    if (!value || value === "-" || value === "—") {
+      window.appUi.showToast(`${fieldLabel} is empty`, "warning");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(value);
+      window.appUi.showToast(`${fieldLabel} copied`, "success");
+    } catch (error) {
+      window.appUi.showToast("Unable to copy", "error");
+    }
+  }
+
+  function bindCopyButtons() {
+    document.querySelectorAll("button[data-copy-target]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.dataset.copyTarget;
+        const fieldLabel = btn.dataset.copyLabel || "Value";
+        copyFieldValue(targetId, fieldLabel);
+      });
+    });
+  }
+
   function setText(id, value) {
     const el = document.getElementById(id);
     if (el) el.textContent = window.appUi.safe(value);
@@ -61,6 +105,7 @@
 
   function renderProfile(staff) {
     currentStaff = staff;
+    const nameParts = splitName(staff.fullName);
 
     // Use Drive thumbnail URL — serves a real JPEG (same approach as staff list)
     const fileId = staff.photo ? window.driveLinks.extractFileId(staff.photo) : '';
@@ -72,6 +117,8 @@
     photoEl.src = thumbUrl || avatarSvg;
     photoEl.onerror = () => { photoEl.onerror = null; photoEl.src = avatarSvg; };
     setText("profile-name", staff.fullName);
+    setText("profile-first-name", nameParts.firstName);
+    setText("profile-last-name", nameParts.lastName);
     setText("profile-designation", staff.designation);
     setText("profile-mobile", staff.mobile);
 
@@ -126,6 +173,7 @@
   }
 
   if (window.location.pathname.endsWith("staff-profile.html")) {
+    bindCopyButtons();
     bindPdf();
     loadProfile();
   }

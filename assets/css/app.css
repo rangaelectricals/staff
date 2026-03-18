@@ -775,6 +775,13 @@ body::before {
   padding: var(--space-3) var(--space-4);
 }
 
+.info-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
 .info-row .info-label {
   color: var(--text-muted);
   font-size: var(--font-size-caption);
@@ -787,6 +794,49 @@ body::before {
   color: var(--text-primary);
   font-size: var(--font-size-body);
   font-weight: 600;
+}
+
+.copy-inline-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.copy-chip {
+  min-height: 26px;
+  min-width: 26px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-chip svg {
+  width: 13px;
+  height: 13px;
+}
+
+.copy-chip:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.copy-chip:active {
+  transform: translateY(1px);
+}
+
+.copy-chip-inline {
+  min-height: 24px;
+  min-width: 24px;
 }
 
 .label .label-text,

@@ -79,11 +79,35 @@
               <div class="w-28 h-28 rounded-2xl overflow-hidden border-4 border-slate-200 shadow-md  mb-4">
                 <img id="profile-photo" src="" alt="Staff Photo" class="w-full h-full object-cover" loading="lazy" />
               </div>
-              <h2 id="profile-name" class="text-lg font-bold text-slate-800">—</h2>
-              <div id="profile-designation"
-                class="mt-1 px-3 py-1 rounded-full bg-orange-50 text-orange-600 text-xs font-semibold border border-orange-100">
-                —</div>
-              <p id="profile-mobile" class="text-slate-700 font-medium text-sm mt-2">—</p>
+              <div class="copy-inline-wrap">
+                <h2 id="profile-name" class="text-lg font-bold text-slate-800">—</h2>
+                <button type="button" class="copy-chip copy-chip-inline" data-copy-target="profile-name" data-copy-label="Full Name" aria-label="Copy Full Name" title="Copy Full Name">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="copy-inline-wrap mt-1">
+                <div id="profile-designation"
+                  class="px-3 py-1 rounded-full bg-orange-50 text-orange-600 text-xs font-semibold border border-orange-100">
+                  —</div>
+                <button type="button" class="copy-chip copy-chip-inline" data-copy-target="profile-designation" data-copy-label="Designation" aria-label="Copy Designation" title="Copy Designation">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="copy-inline-wrap mt-2">
+                <p id="profile-mobile" class="text-slate-700 font-medium text-sm">—</p>
+                <button type="button" class="copy-chip copy-chip-inline" data-copy-target="profile-mobile" data-copy-label="Mobile" aria-label="Copy Mobile" title="Copy Mobile">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </button>
+              </div>
             </div>
 
             <!-- QR Code -->
@@ -125,15 +149,63 @@
             </div>
             <div class="sys-card-body grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div class="info-row">
-                <span class="info-label">Date of Birth</span>
+                <div class="info-row-head">
+                  <span class="info-label">First Name</span>
+                  <button type="button" class="copy-chip" data-copy-target="profile-first-name" data-copy-label="First Name" aria-label="Copy First Name" title="Copy First Name">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                </div>
+                <span id="profile-first-name" class="info-value">—</span>
+              </div>
+              <div class="info-row">
+                <div class="info-row-head">
+                  <span class="info-label">Last Name</span>
+                  <button type="button" class="copy-chip" data-copy-target="profile-last-name" data-copy-label="Last Name" aria-label="Copy Last Name" title="Copy Last Name">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                </div>
+                <span id="profile-last-name" class="info-value">—</span>
+              </div>
+              <div class="info-row">
+                <div class="info-row-head">
+                  <span class="info-label">Date of Birth</span>
+                  <button type="button" class="copy-chip" data-copy-target="profile-dob" data-copy-label="Date of Birth" aria-label="Copy Date of Birth" title="Copy Date of Birth">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                </div>
                 <span id="profile-dob" class="info-value">—</span>
               </div>
               <div class="info-row">
-                <span class="info-label">Blood Group</span>
+                <div class="info-row-head">
+                  <span class="info-label">Blood Group</span>
+                  <button type="button" class="copy-chip" data-copy-target="profile-blood" data-copy-label="Blood Group" aria-label="Copy Blood Group" title="Copy Blood Group">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                </div>
                 <span id="profile-blood" class="info-value">—</span>
               </div>
               <div class="info-row sm:col-span-2">
-                <span class="info-label">Address</span>
+                <div class="info-row-head">
+                  <span class="info-label">Address</span>
+                  <button type="button" class="copy-chip" data-copy-target="profile-address" data-copy-label="Address" aria-label="Copy Address" title="Copy Address">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                </div>
                 <span id="profile-address" class="info-value">—</span>
               </div>
             </div>
@@ -150,11 +222,27 @@
             </div>
             <div class="sys-card-body grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div class="info-row">
-                <span class="info-label">Aadhaar Number</span>
+                <div class="info-row-head">
+                  <span class="info-label">Aadhaar Number</span>
+                  <button type="button" class="copy-chip" data-copy-target="profile-aadhaar" data-copy-label="Aadhaar Number" aria-label="Copy Aadhaar Number" title="Copy Aadhaar Number">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                </div>
                 <span id="profile-aadhaar" class="info-value">—</span>
               </div>
               <div class="info-row">
-                <span class="info-label">Driving License</span>
+                <div class="info-row-head">
+                  <span class="info-label">Driving License</span>
+                  <button type="button" class="copy-chip" data-copy-target="profile-license" data-copy-label="Driving License" aria-label="Copy Driving License" title="Copy Driving License">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                </div>
                 <span id="profile-license" class="info-value">—</span>
               </div>
             </div>
@@ -172,11 +260,27 @@
             </div>
             <div class="sys-card-body grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div class="info-row">
-                <span class="info-label">Contact Name</span>
+                <div class="info-row-head">
+                  <span class="info-label">Contact Name</span>
+                  <button type="button" class="copy-chip" data-copy-target="profile-emergency-name" data-copy-label="Emergency Contact Name" aria-label="Copy Emergency Contact Name" title="Copy Emergency Contact Name">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                </div>
                 <span id="profile-emergency-name" class="info-value">—</span>
               </div>
               <div class="info-row">
-                <span class="info-label">Mobile</span>
+                <div class="info-row-head">
+                  <span class="info-label">Mobile</span>
+                  <button type="button" class="copy-chip" data-copy-target="profile-emergency-mobile" data-copy-label="Emergency Mobile" aria-label="Copy Emergency Mobile" title="Copy Emergency Mobile">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                </div>
                 <span id="profile-emergency-mobile" class="info-value">—</span>
               </div>
             </div>
