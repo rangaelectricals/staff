@@ -50,14 +50,33 @@
     if (el) el.textContent = window.appUi.safe(value);
   }
 
+  function normalizeName(value) {
+    return String(value || "staff")
+      .trim()
+      .replace(/\s+/g, "_")
+      .replace(/[^a-zA-Z0-9_\-]/g, "")
+      .toUpperCase();
+  }
+
+  function buildDownloadFileName(staff, docKey) {
+    const staffName = normalizeName(staff.fullName || "STAFF");
+    const map = {
+      aad: "AAD",
+      dl: "DL",
+      photo: "PHOTO",
+    };
+    const suffix = map[docKey] || "DOC";
+    return `${staffName}_${suffix}`;
+  }
+
   function renderDocs(staff) {
     const root = document.getElementById("docs-actions");
     if (!root) return;
 
     const docs = [
-      { label: "View Aadhaar", url: staff.aadhaarImage },
-      { label: "View License", url: staff.licenseImage },
-      { label: "View Photo", url: staff.photo },
+      { label: "View Aadhaar", key: "aad", url: staff.aadhaarImage },
+      { label: "View License", key: "dl", url: staff.licenseImage },
+      { label: "View Photo", key: "photo", url: staff.photo },
     ];
 
     root.innerHTML = docs
@@ -67,6 +86,7 @@
         const preview = hasAttachment ? window.driveLinks.toPreviewUrl(rawUrl) : "";
         const download = hasAttachment ? window.driveLinks.toDownloadUrl(rawUrl) : "";
         const share = hasAttachment ? window.driveLinks.toShareUrl(rawUrl) : "";
+        const fileName = buildDownloadFileName(staff, doc.key);
         const isValid =
           hasAttachment &&
           preview &&
@@ -81,7 +101,7 @@
               isValid
                 ? `<div class="flex flex-wrap gap-2">
                     <a class="btn btn-xs bg-blue-500 hover:bg-blue-600 text-white" href="${preview}" target="_blank" rel="noopener">Preview</a>
-                    <a class="btn btn-xs bg-slate-600 hover:bg-slate-700 text-white" href="${download}" target="_blank" rel="noopener noreferrer">Download</a>
+                    <a class="btn btn-xs bg-slate-600 hover:bg-slate-700 text-white" href="${download}" download="${fileName}" target="_blank" rel="noopener noreferrer">Download</a>
                     <button class="btn btn-xs bg-green-500 hover:bg-green-600 text-white" data-share="${share}">Share</button>
                   </div>`
                 : `<p class="text-sm text-slate-500 font-medium">No Attachments</p>`

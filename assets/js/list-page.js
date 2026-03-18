@@ -48,6 +48,25 @@
     return `staff-profile.html?id=${encodeURIComponent(id)}`;
   }
 
+  function normalizeName(value) {
+    return String(value || "staff")
+      .trim()
+      .replace(/\s+/g, "_")
+      .replace(/[^a-zA-Z0-9_\-]/g, "")
+      .toUpperCase();
+  }
+
+  function buildDownloadFileName(staff, docKey) {
+    const staffName = normalizeName(staff.fullName || "STAFF");
+    const map = {
+      aad: "AAD",
+      dl: "DL",
+      photo: "PHOTO",
+    };
+    const suffix = map[docKey] || "DOC";
+    return `${staffName}_${suffix}`;
+  }
+
   // ── Table (desktop) ────────────────────────────────────────────────────────
   function renderTable() {
     const body = document.getElementById("staff-table-body");
@@ -199,9 +218,9 @@
     const content = document.getElementById("docs-modal-content");
 
     const docMap = [
-      { label: "Aadhaar", url: staff.aadhaarImage },
-      { label: "License", url: staff.licenseImage },
-      { label: "Photo", url: staff.photo },
+      { label: "Aadhaar", key: "aad", url: staff.aadhaarImage },
+      { label: "License", key: "dl", url: staff.licenseImage },
+      { label: "Photo", key: "photo", url: staff.photo },
     ];
 
     content.innerHTML = docMap.map((doc) => {
@@ -209,6 +228,7 @@
       const hasAttachment = Boolean(rawUrl);
       const preview = hasAttachment ? window.driveLinks.toPreviewUrl(rawUrl) : "";
       const download = hasAttachment ? window.driveLinks.toDownloadUrl(rawUrl) : "";
+      const fileName = buildDownloadFileName(staff, doc.key);
       const isValid =
         hasAttachment &&
         preview &&
@@ -221,7 +241,7 @@
         ${
           isValid
             ? `<a class="btn btn-xs btn-outline" href="${preview}" target="_blank" rel="noopener">Preview</a>
-               <a class="btn btn-xs bg-slate-800 text-white border-none hover:bg-slate-700" href="${download}" target="_blank" rel="noopener">Download</a>
+               <a class="btn btn-xs bg-slate-800 text-white border-none hover:bg-slate-700" href="${download}" download="${fileName}" target="_blank" rel="noopener">Download</a>
                <button class="btn btn-xs btn-outline text-orange-600 border-orange-200" data-share="${preview}">Copy Link</button>`
             : `<span class="text-xs font-semibold text-slate-500">No Attachments</span>`
         }
