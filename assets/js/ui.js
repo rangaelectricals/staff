@@ -75,7 +75,7 @@
   function formatDate(dateStr) {
     if (!dateStr || dateStr.trim() === "") return "—";
 
-    // Attempt to parse 'YYYY-MM-DD' correctly without timezone shift issues
+    // Parse YYYY-MM-DD without timezone shifts and render as DD/MM/YYYY.
     const parts = String(dateStr).split('-');
     if (parts.length === 3) {
       const year = parseInt(parts[0], 10);
@@ -83,14 +83,20 @@
       const day = parseInt(parts[2], 10);
       const d = new Date(year, month, day);
       if (!isNaN(d.getTime())) {
-        return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const yyyy = d.getFullYear();
+        return `${dd}/${mm}/${yyyy}`;
       }
     }
 
     // Fallback if parsing fails or it's a different format
     const d = new Date(dateStr);
     if (!isNaN(d.getTime())) {
-      return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      const dd = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const yyyy = d.getFullYear();
+      return `${dd}/${mm}/${yyyy}`;
     }
 
     return dateStr;
