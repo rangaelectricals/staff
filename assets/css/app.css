@@ -1,5 +1,5 @@
 /* Corporate UI Theme - Staff Management */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
   --sidebar-width: 260px;
@@ -15,10 +15,10 @@
   --space-6: 24px;
   --space-8: 32px;
 
-  --bg-page: #f3f6fb;
-  --bg-surface: #ffffff;
-  --bg-surface-muted: #f8fafc;
-  --bg-topbar: #ffffff;
+  --bg-page: #eaf1fb;
+  --bg-surface: rgba(255, 255, 255, 0.9);
+  --bg-surface-muted: rgba(248, 250, 252, 0.92);
+  --bg-topbar: rgba(255, 255, 255, 0.92);
 
   --text-primary: #0f172a;
   --text-secondary: #334155;
@@ -36,12 +36,13 @@
   --warning-600: #d97706;
   --danger-600: #dc2626;
 
-  --hero-gradient: linear-gradient(135deg, #eff6ff 0%, #e2e8f0 100%);
+  --hero-gradient: linear-gradient(140deg, #e0ecff 0%, #f8fbff 48%, #dce7fb 100%);
   --btn-brand-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
 
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 6px 20px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.1);
+  --shadow-sm: 0 8px 16px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 16px 30px rgba(15, 23, 42, 0.1), 0 4px 12px rgba(37, 99, 235, 0.08);
+  --shadow-lg: 0 22px 46px rgba(15, 23, 42, 0.14), 0 10px 20px rgba(30, 64, 175, 0.1);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 rgba(148, 163, 184, 0.14);
 
   --transition: 0.2s ease;
 
@@ -56,7 +57,7 @@ html {
 
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   background: var(--bg-page);
   color: var(--text-secondary);
   overflow-x: hidden;
@@ -81,8 +82,22 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(circle at 10% 10%, rgba(37, 99, 235, 0.06), transparent 32%),
-    radial-gradient(circle at 90% 85%, rgba(100, 116, 139, 0.1), transparent 38%);
+  background:
+    radial-gradient(circle at 8% 10%, rgba(37, 99, 235, 0.2), transparent 34%),
+    radial-gradient(circle at 92% 83%, rgba(14, 116, 144, 0.16), transparent 38%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(226, 232, 240, 0.18));
+  z-index: -1;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: 0.24;
   z-index: -1;
 }
 
@@ -213,6 +228,8 @@ body::before {
   top: 0;
   z-index: 40;
   overflow: visible;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-sm), var(--shadow-inset);
 }
 
 .topbar-brand {
@@ -336,8 +353,17 @@ body::before {
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-lg);
   background: var(--hero-gradient);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md), var(--shadow-inset);
   padding: var(--space-6);
+  transform-style: preserve-3d;
+}
+
+.page-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.56), rgba(255, 255, 255, 0));
+  pointer-events: none;
 }
 
 .page-hero .hero-icon {
@@ -390,13 +416,17 @@ body::before {
   background: var(--bg-surface);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm), var(--shadow-inset);
   overflow: hidden;
+  backdrop-filter: blur(8px);
+  transform-style: preserve-3d;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
 }
 
 .sys-card:hover {
   border-color: var(--border-strong);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md), var(--shadow-inset);
+  transform: translateY(-4px);
 }
 
 .sys-card-header {
@@ -438,7 +468,7 @@ body::before {
   border-radius: var(--radius-lg);
   background: var(--bg-surface);
   border: 1px solid var(--border-soft);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm), var(--shadow-inset);
   padding: var(--space-4);
   display: flex;
   align-items: center;
@@ -448,7 +478,8 @@ body::before {
 
 .stat-card:hover {
   border-color: var(--border-strong);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md), var(--shadow-inset);
+  transform: translateY(-4px);
 }
 
 .stat-card .stat-icon {
@@ -504,7 +535,7 @@ body::before {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-muted);
-  background: #f8fafc;
+  background: linear-gradient(180deg, #f8fafc, #eef2ff);
   padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--border-soft);
   white-space: nowrap;
@@ -519,7 +550,7 @@ body::before {
 }
 
 .sys-table tbody tr:hover td {
-  background: #f8fafc;
+  background: linear-gradient(180deg, #f8fafc, #f1f5f9);
 }
 
 .sys-table tbody tr:last-child td {
@@ -694,6 +725,8 @@ body::before {
   padding: 0 var(--space-4);
   font-size: 14px;
   line-height: 1;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.58);
+  transform: translateY(0);
 }
 
 .btn.btn-sm,
@@ -712,19 +745,20 @@ body::before {
 }
 
 .btn:active {
-  transform: translateY(1px);
+  transform: translateY(1px) scale(0.99);
 }
 
 .btn-brand {
   background: var(--btn-brand-gradient) !important;
   border: 1px solid #1d4ed8 !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28) !important;
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
 }
 
 .btn-brand:hover {
   filter: brightness(1.03);
-  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.3) !important;
+  box-shadow: 0 16px 28px rgba(37, 99, 235, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+  transform: translateY(-2px);
 }
 
 .btn-outline {
@@ -737,18 +771,19 @@ body::before {
   background: #f8fafc !important;
   border-color: #94a3b8 !important;
   color: var(--text-primary) !important;
+  transform: translateY(-2px);
 }
 
 .input,
 .textarea,
 .select {
-  background: #ffffff !important;
+  background: linear-gradient(180deg, #ffffff, #f8fafc) !important;
   color: var(--text-primary);
   border: 1px solid var(--border-strong) !important;
   border-radius: var(--radius-sm) !important;
   font-size: var(--font-size-body) !important;
   font-weight: 500;
-  box-shadow: none !important;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06), 0 2px 6px rgba(15, 23, 42, 0.04) !important;
   transition: var(--transition);
 }
 
@@ -771,8 +806,9 @@ body::before {
   gap: var(--space-1);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-md);
-  background: #ffffff;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.9));
   padding: var(--space-3) var(--space-4);
+  box-shadow: var(--shadow-sm), var(--shadow-inset);
 }
 
 .info-row-head {

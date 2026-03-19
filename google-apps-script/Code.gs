@@ -29,6 +29,9 @@ function routeRequest_(e) {
     if (action === 'deleteStaff') {
       return handleDeleteStaff_(payload);
     }
+    if (action === 'bulkAddStaff') {
+      return handleBulkAddStaff_(payload);
+    }
 
     return jsonResponse_(false, null, 'Unsupported action: ' + action);
   } catch (error) {

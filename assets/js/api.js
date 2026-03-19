@@ -54,5 +54,8 @@
     async deleteStaff(data) {
       return request(ACTIONS.DELETE_STAFF, data || {}, "POST");
     },
+    async bulkAddStaff(data) {
+      return request(ACTIONS.BULK_ADD_STAFF, data || {}, "POST");
+    },
   };
 })();

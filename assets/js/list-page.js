@@ -6,7 +6,73 @@
     records: [],
     filters: { name: "", mobile: "", designation: "" },
     isLoading: false,
+    bulkVerifiedRows: [],
+    bulkInvalidRows: [],
   };
+
+  const EXPORT_HEADERS = [
+    "Staff ID",
+    "Timestamp",
+    "Full Name",
+    "Date of Birth",
+    "Mobile",
+    "Address",
+    "Aadhaar Number",
+    "Driving License",
+    "Emergency Contact Name",
+    "Emergency Mobile",
+    "Aadhaar Image",
+    "License Image",
+    "Photo",
+    "Blood Group",
+    "Designation",
+  ];
+
+  const BULK_HEADERS = [
+    "Full Name",
+    "Date of Birth",
+    "Mobile",
+    "Address",
+    "Aadhaar Number",
+    "Driving License",
+    "Emergency Contact Name",
+    "Emergency Mobile",
+    "Aadhaar Image",
+    "License Image",
+    "Photo",
+    "Blood Group",
+    "Designation",
+  ];
+
+  const BULK_KEY_MAP = {
+    "Full Name": "fullName",
+    "Date of Birth": "dob",
+    "Mobile": "mobile",
+    "Address": "address",
+    "Aadhaar Number": "aadhaarNumber",
+    "Driving License": "drivingLicense",
+    "Emergency Contact Name": "emergencyContactName",
+    "Emergency Mobile": "emergencyMobile",
+    "Aadhaar Image": "aadhaarImage",
+    "License Image": "licenseImage",
+    "Photo": "photo",
+    "Blood Group": "bloodGroup",
+    "Designation": "designation",
+  };
+
+  const REQUIRED_BULK_KEYS = [
+    "fullName",
+    "dob",
+    "mobile",
+    "address",
+    "aadhaarNumber",
+    "drivingLicense",
+    "emergencyContactName",
+    "emergencyMobile",
+    "photo",
+    "bloodGroup",
+    "designation",
+  ];
 
   function toggleLoading(isLoading) {
     state.isLoading = isLoading;
@@ -48,6 +114,53 @@
     return `staff-profile.html?id=${encodeURIComponent(id)}`;
   }
 
+  function normalizeHeaderName(value) {
+    return String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ");
+  }
+
+  function pad(n) {
+    return String(n).padStart(2, "0");
+  }
+
+  function formatDateYmd(input) {
+    const str = String(input || "").trim();
+    if (!str) return "";
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+      return str;
+    }
+
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(str)) {
+      const [dd, mm, yyyy] = str.split("/");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    if (/^\d{2}-\d{2}-\d{4}$/.test(str)) {
+      const [dd, mm, yyyy] = str.split("-");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    const dt = new Date(str);
+    if (!Number.isNaN(dt.getTime())) {
+      return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
+    }
+
+    return "";
+  }
+
+  function parseExcelDate(value) {
+    if (typeof value === "number" && Number.isFinite(value)) {
+      const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+      const ms = value * 24 * 60 * 60 * 1000;
+      const dt = new Date(excelEpoch.getTime() + ms);
+      return `${dt.getUTCFullYear()}-${pad(dt.getUTCMonth() + 1)}-${pad(dt.getUTCDate())}`;
+    }
+    return formatDateYmd(value);
+  }
+
   function normalizeName(value) {
     return String(value || "staff")
       .trim()
@@ -65,6 +178,401 @@
     };
     const suffix = map[docKey] || "DOC";
     return `${staffName}_${suffix}`;
+  }
+
+  function getBulkElements() {
+    return {
+      fileInput: document.getElementById("bulk-file"),
+      summary: document.getElementById("bulk-verify-summary"),
+      errorsWrap: document.getElementById("bulk-verify-errors"),
+      errorsBody: document.getElementById("bulk-verify-errors-body"),
+      btnUpload: document.getElementById("btn-upload-bulk"),
+    };
+  }
+
+  function renderBulkSummary(total, valid, invalid) {
+    const { summary } = getBulkElements();
+    if (!summary) return;
+    summary.classList.remove("hidden");
+    summary.innerHTML = `
+      <div class="flex flex-wrap gap-3 items-center">
+        <span class="badge badge-neutral">Rows: ${total}</span>
+        <span class="badge badge-success">Valid: ${valid}</span>
+        <span class="badge badge-error">Invalid: ${invalid}</span>
+      </div>
+      <p class="mt-2 text-xs text-slate-600">Upload button stays enabled only when at least one valid row is verified.</p>
+    `;
+  }
+
+  function renderBulkErrors(errors) {
+    const { errorsWrap, errorsBody } = getBulkElements();
+    if (!errorsWrap || !errorsBody) return;
+
+    if (!errors.length) {
+      errorsWrap.classList.add("hidden");
+      errorsBody.innerHTML = "";
+      return;
+    }
+
+    errorsWrap.classList.remove("hidden");
+    errorsBody.innerHTML = errors.slice(0, 20).map((item) => `
+      <tr>
+        <td>${item.row}</td>
+        <td>${item.errors.join(", ")}</td>
+      </tr>
+    `).join("");
+  }
+
+  function setUploadEnabled(enabled) {
+    const { btnUpload } = getBulkElements();
+    if (!btnUpload) return;
+    btnUpload.disabled = !enabled;
+  }
+
+  function styleCell(ws, cellAddress, style) {
+    if (!ws[cellAddress]) return;
+    ws[cellAddress].s = style;
+  }
+
+  function exportStyledExcel(records) {
+    if (!window.XLSX || !window.XLSX.utils) {
+      window.appUi.showToast("Excel library not loaded", "error");
+      return;
+    }
+
+    const title = "RANGA ELECTRICALS - STAFF LIST";
+    const now = new Date();
+    const generatedAt = `Generated: ${now.toLocaleString()}`;
+    const rows = records.map((staff) => [
+      staff.id || "",
+      staff.timestamp || "",
+      staff.fullName || "",
+      staff.dob || "",
+      staff.mobile || "",
+      staff.address || "",
+      staff.aadhaarNumber || "",
+      staff.drivingLicense || "",
+      staff.emergencyContactName || "",
+      staff.emergencyMobile || "",
+      staff.aadhaarImage || "",
+      staff.licenseImage || "",
+      staff.photo || "",
+      staff.bloodGroup || "",
+      staff.designation || "",
+    ]);
+
+    const aoa = [
+      [title],
+      [generatedAt],
+      [],
+      EXPORT_HEADERS,
+      ...rows,
+    ];
+
+    const ws = window.XLSX.utils.aoa_to_sheet(aoa);
+    ws["!merges"] = [
+      { s: { r: 0, c: 0 }, e: { r: 0, c: EXPORT_HEADERS.length - 1 } },
+      { s: { r: 1, c: 0 }, e: { r: 1, c: EXPORT_HEADERS.length - 1 } },
+    ];
+
+    ws["!cols"] = [
+      { wch: 21 }, { wch: 20 }, { wch: 24 }, { wch: 14 }, { wch: 14 },
+      { wch: 36 }, { wch: 20 }, { wch: 20 }, { wch: 24 }, { wch: 16 },
+      { wch: 32 }, { wch: 32 }, { wch: 32 }, { wch: 14 }, { wch: 18 },
+    ];
+
+    ws["!rows"] = [{ hpt: 26 }, { hpt: 20 }, { hpt: 10 }, { hpt: 24 }];
+
+    const titleStyle = {
+      font: { name: "Calibri", bold: true, color: { rgb: "FFFFFFFF" }, sz: 14 },
+      fill: { fgColor: { rgb: "FF0F766E" } },
+      alignment: { horizontal: "center", vertical: "center", indent: 1 },
+      border: {
+        top: { style: "thin", color: { rgb: "FF0B4F49" } },
+        bottom: { style: "thin", color: { rgb: "FF0B4F49" } },
+        left: { style: "thin", color: { rgb: "FF0B4F49" } },
+        right: { style: "thin", color: { rgb: "FF0B4F49" } },
+      },
+    };
+
+    const subtitleStyle = {
+      font: { name: "Calibri", italic: true, color: { rgb: "FF334155" }, sz: 10 },
+      fill: { fgColor: { rgb: "FFE2E8F0" } },
+      alignment: { horizontal: "left", vertical: "center", indent: 1 },
+      border: {
+        top: { style: "thin", color: { rgb: "FFCBD5E1" } },
+        bottom: { style: "thin", color: { rgb: "FFCBD5E1" } },
+        left: { style: "thin", color: { rgb: "FFCBD5E1" } },
+        right: { style: "thin", color: { rgb: "FFCBD5E1" } },
+      },
+    };
+
+    const headerStyle = {
+      font: { name: "Calibri", bold: true, color: { rgb: "FFFFFFFF" }, sz: 11 },
+      fill: { fgColor: { rgb: "FF1E3A8A" } },
+      alignment: { horizontal: "left", vertical: "center", wrapText: true, indent: 1 },
+      border: {
+        top: { style: "thin", color: { rgb: "FF1E3A8A" } },
+        bottom: { style: "thin", color: { rgb: "FF1E3A8A" } },
+        left: { style: "thin", color: { rgb: "FF1E3A8A" } },
+        right: { style: "thin", color: { rgb: "FF1E3A8A" } },
+      },
+    };
+
+    const rowStyleOdd = {
+      font: { name: "Calibri", color: { rgb: "FF0F172A" }, sz: 10 },
+      fill: { fgColor: { rgb: "FFFFFFFF" } },
+      alignment: { horizontal: "left", vertical: "top", wrapText: true, indent: 1 },
+      border: {
+        top: { style: "thin", color: { rgb: "FFE2E8F0" } },
+        bottom: { style: "thin", color: { rgb: "FFE2E8F0" } },
+        left: { style: "thin", color: { rgb: "FFE2E8F0" } },
+        right: { style: "thin", color: { rgb: "FFE2E8F0" } },
+      },
+    };
+
+    const rowStyleEven = {
+      font: { name: "Calibri", color: { rgb: "FF0F172A" }, sz: 10 },
+      fill: { fgColor: { rgb: "FFF8FAFC" } },
+      alignment: { horizontal: "left", vertical: "top", wrapText: true, indent: 1 },
+      border: {
+        top: { style: "thin", color: { rgb: "FFE2E8F0" } },
+        bottom: { style: "thin", color: { rgb: "FFE2E8F0" } },
+        left: { style: "thin", color: { rgb: "FFE2E8F0" } },
+        right: { style: "thin", color: { rgb: "FFE2E8F0" } },
+      },
+    };
+
+    styleCell(ws, "A1", titleStyle);
+    styleCell(ws, "A2", subtitleStyle);
+
+    for (let c = 0; c < EXPORT_HEADERS.length; c++) {
+      const headerCell = window.XLSX.utils.encode_cell({ r: 3, c });
+      styleCell(ws, headerCell, headerStyle);
+    }
+
+    for (let r = 4; r < 4 + rows.length; r++) {
+      for (let c = 0; c < EXPORT_HEADERS.length; c++) {
+        const cell = window.XLSX.utils.encode_cell({ r, c });
+        styleCell(ws, cell, (r % 2 === 0) ? rowStyleEven : rowStyleOdd);
+      }
+    }
+
+    const wb = window.XLSX.utils.book_new();
+    window.XLSX.utils.book_append_sheet(wb, ws, "Staff List");
+    const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
+    window.XLSX.writeFile(wb, `STAFF_LIST_${stamp}.xlsx`);
+  }
+
+  function buildTemplateWorkbook() {
+    if (!window.XLSX || !window.XLSX.utils) {
+      window.appUi.showToast("Excel library not loaded", "error");
+      return;
+    }
+
+    const sample = [
+      "Ravi Kumar",
+      "1998-02-11",
+      "9876543210",
+      "No. 21, Gandhi Street, Chennai",
+      "123412341234",
+      "TN01 20190012345",
+      "Suresh Kumar",
+      "9876543201",
+      "",
+      "",
+      "https://drive.google.com/file/d/EXAMPLE/view",
+      "O+",
+      "Driver",
+    ];
+
+    const ws = window.XLSX.utils.aoa_to_sheet([BULK_HEADERS, sample]);
+    ws["!cols"] = BULK_HEADERS.map(() => ({ wch: 24 }));
+
+    const wb = window.XLSX.utils.book_new();
+    window.XLSX.utils.book_append_sheet(wb, ws, "Bulk Staff Template");
+    window.XLSX.writeFile(wb, "STAFF_BULK_TEMPLATE.xlsx");
+  }
+
+  function mapRowToPayload(rawRow) {
+    const payload = {};
+    Object.keys(rawRow).forEach((key) => {
+      const normalizedKey = normalizeHeaderName(key);
+      const foundHeader = BULK_HEADERS.find((header) => normalizeHeaderName(header) === normalizedKey);
+      if (!foundHeader) return;
+      const payloadKey = BULK_KEY_MAP[foundHeader];
+      payload[payloadKey] = String(rawRow[key] ?? "").trim();
+    });
+
+    payload.dob = parseExcelDate(rawRow["Date of Birth"] || payload.dob);
+    return payload;
+  }
+
+  function validateBulkPayload(payload) {
+    const errors = [];
+
+    REQUIRED_BULK_KEYS.forEach((key) => {
+      if (!String(payload[key] || "").trim()) {
+        errors.push(`Missing ${key}`);
+      }
+    });
+
+    if (payload.mobile && !/^\d{10}$/.test(payload.mobile)) {
+      errors.push("Mobile must be 10 digits");
+    }
+
+    if (payload.emergencyMobile && !/^\d{10}$/.test(payload.emergencyMobile)) {
+      errors.push("Emergency mobile must be 10 digits");
+    }
+
+    if (payload.aadhaarNumber && !/^\d{12}$/.test(payload.aadhaarNumber)) {
+      errors.push("Aadhaar number must be 12 digits");
+    }
+
+    if (payload.dob && !/^\d{4}-\d{2}-\d{2}$/.test(payload.dob)) {
+      errors.push("Date of birth must be YYYY-MM-DD");
+    }
+
+    return errors;
+  }
+
+  async function readBulkRowsFromFile(file) {
+    const buf = await file.arrayBuffer();
+    const wb = window.XLSX.read(buf, { type: "array", cellDates: true });
+    const sheetName = wb.SheetNames[0];
+    const sheet = wb.Sheets[sheetName];
+    return window.XLSX.utils.sheet_to_json(sheet, { defval: "", raw: true });
+  }
+
+  async function verifyBulkFile() {
+    const { fileInput } = getBulkElements();
+    const file = fileInput && fileInput.files ? fileInput.files[0] : null;
+    if (!file) {
+      window.appUi.showToast("Select an Excel file first", "warning");
+      return;
+    }
+
+    try {
+      const rawRows = await readBulkRowsFromFile(file);
+      if (!rawRows.length) {
+        state.bulkVerifiedRows = [];
+        state.bulkInvalidRows = [];
+        renderBulkSummary(0, 0, 0);
+        renderBulkErrors([]);
+        setUploadEnabled(false);
+        window.appUi.showToast("File is empty", "warning");
+        return;
+      }
+
+      const firstHeaders = Object.keys(rawRows[0] || {}).map(normalizeHeaderName);
+      const missingHeaders = BULK_HEADERS.filter((h) => !firstHeaders.includes(normalizeHeaderName(h)));
+      if (missingHeaders.length) {
+        throw new Error(`Missing columns: ${missingHeaders.join(", ")}`);
+      }
+
+      const validRows = [];
+      const invalidRows = [];
+
+      rawRows.forEach((raw, index) => {
+        const payload = mapRowToPayload(raw);
+        const errors = validateBulkPayload(payload);
+        if (errors.length) {
+          invalidRows.push({ row: index + 2, errors });
+          return;
+        }
+        validRows.push(payload);
+      });
+
+      state.bulkVerifiedRows = validRows;
+      state.bulkInvalidRows = invalidRows;
+
+      renderBulkSummary(rawRows.length, validRows.length, invalidRows.length);
+      renderBulkErrors(invalidRows);
+      setUploadEnabled(validRows.length > 0);
+
+      if (invalidRows.length) {
+        window.appUi.showToast("Verification completed with errors", "warning");
+      } else {
+        window.appUi.showToast("Verification completed successfully", "success");
+      }
+    } catch (error) {
+      setUploadEnabled(false);
+      renderBulkErrors([{ row: 1, errors: [error.message || "Unable to verify file"] }]);
+      window.appUi.showToast(error.message || "Unable to verify file", "error");
+    }
+  }
+
+  async function uploadVerifiedRowsFallback(rows) {
+    let inserted = 0;
+    let failed = 0;
+
+    for (let i = 0; i < rows.length; i++) {
+      try {
+        await window.staffApi.addStaff(rows[i]);
+        inserted += 1;
+      } catch (e) {
+        failed += 1;
+      }
+    }
+
+    return { inserted, failed, total: rows.length };
+  }
+
+  async function uploadVerifiedRows() {
+    if (!state.bulkVerifiedRows.length) {
+      window.appUi.showToast("Verify file before upload", "warning");
+      return;
+    }
+
+    const uploadBtn = document.getElementById("btn-upload-bulk");
+    window.appUi.setButtonLoading(uploadBtn, true, "Uploading...");
+
+    try {
+      const result = await window.staffApi.bulkAddStaff({ rows: state.bulkVerifiedRows });
+      const inserted = Number(result.data && result.data.inserted ? result.data.inserted : 0);
+      const failed = Number(result.data && result.data.failed ? result.data.failed : 0);
+      window.appUi.showToast(`Upload complete: ${inserted} inserted, ${failed} failed`, failed ? "warning" : "success");
+      await loadStaff();
+    } catch (error) {
+      const msg = String(error.message || "");
+      if (msg.toLowerCase().includes("unsupported action")) {
+        const fallback = await uploadVerifiedRowsFallback(state.bulkVerifiedRows);
+        window.appUi.showToast(`Upload complete: ${fallback.inserted} inserted, ${fallback.failed} failed`, fallback.failed ? "warning" : "success");
+        await loadStaff();
+      } else {
+        window.appUi.showToast(msg || "Bulk upload failed", "error");
+      }
+    } finally {
+      window.appUi.setButtonLoading(uploadBtn, false);
+    }
+  }
+
+  async function onExportExcel() {
+    const btn = document.getElementById("btn-export-excel");
+    window.appUi.setButtonLoading(btn, true, "Exporting...");
+
+    try {
+      const res = await window.staffApi.getStaff({
+        page: 1,
+        pageSize: 50000,
+        name: state.filters.name,
+        mobile: state.filters.mobile,
+        designation: state.filters.designation,
+      });
+      const records = res.data || [];
+
+      if (!records.length) {
+        window.appUi.showToast("No data available for export", "warning");
+        return;
+      }
+
+      exportStyledExcel(records);
+      window.appUi.showToast("Excel exported", "success");
+    } catch (error) {
+      window.appUi.showToast(error.message || "Export failed", "error");
+    } finally {
+      window.appUi.setButtonLoading(btn, false);
+    }
   }
 
   // ── Table (desktop) ────────────────────────────────────────────────────────
@@ -359,6 +867,20 @@
         state.page = newPage;
         loadStaff();
       }
+    });
+
+    document.getElementById("btn-export-excel")?.addEventListener("click", onExportExcel);
+    document.getElementById("btn-download-template")?.addEventListener("click", buildTemplateWorkbook);
+    document.getElementById("btn-verify-bulk")?.addEventListener("click", verifyBulkFile);
+    document.getElementById("btn-upload-bulk")?.addEventListener("click", uploadVerifiedRows);
+
+    document.getElementById("bulk-file")?.addEventListener("change", () => {
+      state.bulkVerifiedRows = [];
+      state.bulkInvalidRows = [];
+      setUploadEnabled(false);
+      const { summary } = getBulkElements();
+      if (summary) summary.classList.add("hidden");
+      renderBulkErrors([]);
     });
   }
 

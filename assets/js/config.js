@@ -5,6 +5,7 @@ window.APP_CONFIG = {
     ADD_STAFF: "addStaff",
     UPDATE_STAFF: "updateStaff",
     DELETE_STAFF: "deleteStaff",
+    BULK_ADD_STAFF: "bulkAddStaff",
   },
   PAGE_SIZE: 10,
   CACHE_TTL_MS: 60 * 1000,

@@ -124,11 +124,18 @@ function generateStaffId_() {
   return 'STF-' + stamp + '-' + rand;
 }
 
-function validatePayload_(payload) {
+function validatePayload_(payload, options) {
+  options = options || {};
+  var allowMissingDocs = options.allowMissingDocs === true;
   var fields = [
     'fullName','dob','mobile','address','aadhaarNumber','drivingLicense',
-    'emergencyContactName','emergencyMobile','aadhaarImage','licenseImage','photo','bloodGroup','designation'
+    'emergencyContactName','emergencyMobile','photo','bloodGroup','designation'
   ];
+
+  if (!allowMissingDocs) {
+    fields.push('aadhaarImage');
+    fields.push('licenseImage');
+  }
 
   fields.forEach(function (key) {
     if (!String(payload[key] || '').trim()) {
@@ -224,4 +231,56 @@ function handleDeleteStaff_(payload) {
 
   getSheet_().deleteRow(rowIndex);
   return jsonResponse_(true, { id: payload.id }, 'Staff deleted successfully');
+}
+
+function handleBulkAddStaff_(payload) {
+  ensureHeaders_();
+  var rows = (payload && payload.rows && payload.rows.length) ? payload.rows : [];
+  if (!rows.length) {
+    throw new Error('rows[] is required for bulk upload');
+  }
+
+  var sheet = getSheet_();
+  var valuesToAppend = [];
+  var results = [];
+
+  rows.forEach(function (item, idx) {
+    try {
+      validatePayload_(item, { allowMissingDocs: true });
+
+      valuesToAppend.push([
+        generateStaffId_(),
+        new Date(),
+        item.fullName,
+        item.dob,
+        item.mobile,
+        item.address,
+        item.aadhaarNumber,
+        item.drivingLicense,
+        item.emergencyContactName,
+        item.emergencyMobile,
+        item.aadhaarImage || '',
+        item.licenseImage || '',
+        item.photo,
+        item.bloodGroup,
+        item.designation
+      ]);
+
+      results.push({ row: idx + 2, success: true, message: 'OK' });
+    } catch (err) {
+      results.push({ row: idx + 2, success: false, message: err.message || 'Invalid row' });
+    }
+  });
+
+  if (valuesToAppend.length) {
+    var startRow = sheet.getLastRow() + 1;
+    sheet.getRange(startRow, 1, valuesToAppend.length, 15).setValues(valuesToAppend);
+  }
+
+  return jsonResponse_(true, {
+    total: rows.length,
+    inserted: valuesToAppend.length,
+    failed: rows.length - valuesToAppend.length,
+    results: results
+  }, 'Bulk upload processed');
 }
