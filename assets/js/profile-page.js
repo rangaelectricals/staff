@@ -1,6 +1,73 @@
 (function () {
   let currentStaff = null;
 
+  function setProfileLoading(isLoading) {
+    const textTargets = [
+      "profile-name",
+      "profile-first-name",
+      "profile-last-name",
+      "profile-designation",
+      "profile-mobile",
+      "profile-dob",
+      "profile-blood",
+      "profile-address",
+      "profile-aadhaar",
+      "profile-license",
+      "profile-emergency-name",
+      "profile-emergency-mobile",
+    ];
+
+    textTargets.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (isLoading) {
+        el.textContent = "";
+      }
+      el.classList.toggle("skeleton-3d-text", isLoading);
+      el.classList.toggle("skeleton-3d-float", isLoading);
+      el.classList.toggle("inline-block", isLoading);
+      if (isLoading) {
+        el.style.minWidth = id === "profile-address" ? "75%" : "120px";
+      } else {
+        el.style.minWidth = "";
+      }
+    });
+
+    const photo = document.getElementById("profile-photo");
+    if (photo) {
+      if (isLoading) {
+        photo.removeAttribute("src");
+      }
+      photo.classList.toggle("skeleton-3d-avatar", isLoading);
+      photo.classList.toggle("skeleton-3d-float", isLoading);
+      photo.classList.toggle("profile-photo-loading", isLoading);
+    }
+
+    const docs = document.getElementById("docs-actions");
+    if (docs && isLoading) {
+      docs.innerHTML = Array.from({ length: 3 }).map(() => `
+        <article class="doc-preview-card is-loading">
+          <div class="doc-preview-media">
+            <div class="skeleton-3d-text skeleton-3d-float" style="height:100%;width:100%;border-radius:14px;"></div>
+          </div>
+          <div class="doc-preview-footer">
+            <div class="skeleton-3d-text skeleton-3d-float" style="height:12px;width:54%;"></div>
+            <div class="doc-preview-actions">
+              <div class="skeleton-3d-text skeleton-3d-float" style="height:30px;width:70px;"></div>
+              <div class="skeleton-3d-text skeleton-3d-float" style="height:30px;width:82px;"></div>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    document.getElementById("btn-pdf")?.toggleAttribute("disabled", isLoading);
+    document.getElementById("btn-edit")?.classList.toggle("pointer-events-none", isLoading);
+    document.querySelectorAll("button[data-copy-target]").forEach((btn) => {
+      btn.toggleAttribute("disabled", isLoading);
+    });
+  }
+
   function splitName(fullName) {
     const cleanName = String(fullName || "").trim();
     if (!cleanName) {
@@ -74,9 +141,9 @@
     if (!root) return;
 
     const docs = [
-      { label: "View Aadhaar", key: "aad", url: staff.aadhaarImage },
-      { label: "View License", key: "dl", url: staff.licenseImage },
-      { label: "View Photo", key: "photo", url: staff.photo },
+      { label: "Aadhaar", key: "aad", url: staff.aadhaarImage },
+      { label: "License", key: "dl", url: staff.licenseImage },
+      { label: "Profile Photo", key: "photo", url: staff.photo },
     ];
 
     root.innerHTML = docs
@@ -86,28 +153,36 @@
         const preview = hasAttachment ? window.driveLinks.toPreviewUrl(rawUrl) : "";
         const download = hasAttachment ? window.driveLinks.toDownloadUrl(rawUrl) : "";
         const share = hasAttachment ? window.driveLinks.toShareUrl(rawUrl) : "";
+        const display = hasAttachment ? window.driveLinks.toDisplayUrl(rawUrl, 520) : "";
         const fileName = buildDownloadFileName(staff, doc.key);
-        const isValid =
-          hasAttachment &&
-          preview &&
-          preview !== rawUrl &&
-          download &&
-          download !== rawUrl;
+        const isValid = hasAttachment && window.driveLinks.isSupportedImageSource(rawUrl);
+        const allowShare = /^https?:\/\//i.test(rawUrl);
 
-        return `<div class="card bg-base-200 border border-base-300">
-          <div class="card-body p-3">
-            <h4 class="font-semibold">${doc.label}</h4>
+        return `<article class="doc-preview-card ${isValid ? "" : "doc-preview-empty"}">
+          <div class="doc-preview-media-wrap">
             ${
               isValid
-                ? `<div class="flex flex-wrap gap-2">
-                    <a class="btn btn-xs bg-blue-500 hover:bg-blue-600 text-white" href="${preview}" target="_blank" rel="noopener">Preview</a>
-                    <a class="btn btn-xs bg-slate-600 hover:bg-slate-700 text-white" href="${download}" download="${fileName}" target="_blank" rel="noopener noreferrer">Download</a>
-                    <button class="btn btn-xs bg-green-500 hover:bg-green-600 text-white" data-share="${share}">Share</button>
+                ? `<a href="${preview}" target="_blank" rel="noopener" class="doc-preview-media-link">
+                    <img src="${display}" alt="${doc.label}" class="doc-preview-media" loading="lazy" />
+                  </a>`
+                : `<div class="doc-preview-media doc-preview-fallback">
+                    <span>No Attachment</span>
                   </div>`
-                : `<p class="text-sm text-slate-500 font-medium">No Attachments</p>`
+            }
+            ${
+              isValid
+                ? `<div class="doc-preview-actions float-actions">
+                    <a class="btn btn-xs doc-action-btn doc-action-preview" href="${preview}" target="_blank" rel="noopener">Preview</a>
+                    <a class="btn btn-xs doc-action-btn doc-action-download" href="${download}" download="${fileName}" target="_blank" rel="noopener noreferrer">Download</a>
+                    ${allowShare ? `<button class="btn btn-xs doc-action-btn doc-action-share" data-share="${share}">Share</button>` : ""}
+                  </div>`
+                : ""
             }
           </div>
-        </div>`;
+          <div class="doc-preview-footer">
+            <h4 class="doc-preview-title">${doc.label}</h4>
+          </div>
+        </article>`;
       })
       .join("");
 
@@ -127,11 +202,7 @@
     currentStaff = staff;
     const nameParts = splitName(staff.fullName);
 
-    // Use Drive thumbnail URL — serves a real JPEG (same approach as staff list)
-    const fileId = staff.photo ? window.driveLinks.extractFileId(staff.photo) : '';
-    const thumbUrl = fileId
-      ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w300-h300`
-      : '';
+    const thumbUrl = staff.photo ? window.driveLinks.toDisplayUrl(staff.photo, 300) : '';
     const avatarSvg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' fill='%23e2e8f0' rx='8'/%3E%3Ccircle cx='60' cy='46' r='22' fill='%2394a3b8'/%3E%3Cellipse cx='60' cy='96' rx='34' ry='22' fill='%2394a3b8'/%3E%3C/svg%3E`;
     const photoEl = document.getElementById("profile-photo");
     photoEl.src = thumbUrl || avatarSvg;
@@ -166,6 +237,7 @@
       return;
     }
 
+    setProfileLoading(true);
     try {
       const res = await window.staffApi.getStaff({ id, page: 1, pageSize: 1 });
       const staff = (res.data || [])[0];
@@ -175,6 +247,8 @@
       renderProfile(staff);
     } catch (error) {
       window.appUi.showToast(error.message, "error");
+    } finally {
+      setProfileLoading(false);
     }
   }
 

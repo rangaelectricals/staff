@@ -128,13 +128,12 @@ function validatePayload_(payload, options) {
   options = options || {};
   var allowMissingDocs = options.allowMissingDocs === true;
   var fields = [
-    'fullName','dob','mobile','address','aadhaarNumber','drivingLicense',
-    'emergencyContactName','emergencyMobile','photo','bloodGroup','designation'
+    'fullName','dob','mobile','address','aadhaarNumber',
+    'photo','bloodGroup','designation'
   ];
 
   if (!allowMissingDocs) {
     fields.push('aadhaarImage');
-    fields.push('licenseImage');
   }
 
   fields.forEach(function (key) {
@@ -146,7 +145,7 @@ function validatePayload_(payload, options) {
   if (!/^\d{10}$/.test(String(payload.mobile))) {
     throw new Error('Mobile must be 10 digits');
   }
-  if (!/^\d{10}$/.test(String(payload.emergencyMobile))) {
+  if (String(payload.emergencyMobile || '').trim() && !/^\d{10}$/.test(String(payload.emergencyMobile))) {
     throw new Error('Emergency mobile must be 10 digits');
   }
 }

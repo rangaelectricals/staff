@@ -66,13 +66,60 @@
     "mobile",
     "address",
     "aadhaarNumber",
-    "drivingLicense",
-    "emergencyContactName",
-    "emergencyMobile",
     "photo",
     "bloodGroup",
     "designation",
   ];
+
+  function renderTableSkeletonRows() {
+    const body = document.getElementById("staff-table-body");
+    if (!body) return;
+
+    body.innerHTML = Array.from({ length: 6 }).map(() => `
+      <tr>
+        <td><div class="staff-thumb skeleton-3d-avatar skeleton-3d-float"></div></td>
+        <td><div class="skeleton-3d-text skeleton-3d-float" style="height:12px;width:78%;"></div></td>
+        <td><div class="skeleton-3d-text skeleton-3d-float" style="height:12px;width:62%;"></div></td>
+        <td><div class="skeleton-3d-text skeleton-3d-float" style="height:22px;width:96px;"></div></td>
+        <td><div class="skeleton-3d-text skeleton-3d-float" style="height:22px;width:70px;"></div></td>
+        <td>
+          <div class="staff-action-group">
+            <div class="skeleton-3d-text skeleton-3d-float" style="height:28px;width:62px;"></div>
+            <div class="skeleton-3d-text skeleton-3d-float" style="height:28px;width:62px;"></div>
+            <div class="skeleton-3d-text skeleton-3d-float" style="height:28px;width:62px;"></div>
+            <div class="skeleton-3d-text skeleton-3d-float" style="height:28px;width:48px;"></div>
+          </div>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  function renderCardSkeletonRows() {
+    const root = document.getElementById("staff-card-list");
+    if (!root) return;
+
+    root.innerHTML = Array.from({ length: 4 }).map(() => `
+      <article class="sys-card">
+        <div class="p-4">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="staff-thumb skeleton-3d-avatar skeleton-3d-float" style="width:74px;height:74px;"></div>
+            <div class="flex-1 min-w-0 space-y-2">
+              <div class="skeleton-3d-text skeleton-3d-float" style="height:12px;width:70%;"></div>
+              <div class="skeleton-3d-text skeleton-3d-float" style="height:20px;width:108px;"></div>
+            </div>
+            <div class="skeleton-3d-text skeleton-3d-float" style="height:20px;width:64px;"></div>
+          </div>
+          <div class="skeleton-3d-text skeleton-3d-float mb-3" style="height:12px;width:50%;"></div>
+          <div class="staff-action-group">
+            <div class="skeleton-3d-text skeleton-3d-float" style="height:28px;width:62px;"></div>
+            <div class="skeleton-3d-text skeleton-3d-float" style="height:28px;width:62px;"></div>
+            <div class="skeleton-3d-text skeleton-3d-float" style="height:28px;width:62px;"></div>
+            <div class="skeleton-3d-text skeleton-3d-float" style="height:28px;width:48px;"></div>
+          </div>
+        </div>
+      </article>
+    `).join("");
+  }
 
   function toggleLoading(isLoading) {
     state.isLoading = isLoading;
@@ -82,11 +129,16 @@
     const mobileList = document.getElementById("staff-card-list");
     const pagination = document.getElementById("pagination-controls");
 
-    if (loading) loading.classList.toggle("hidden", !isLoading);
+    if (loading) loading.classList.add("hidden");
     if (empty) empty.classList.add("hidden");
-    if (tableCard) tableCard.classList.toggle("opacity-50", isLoading);
-    if (mobileList) mobileList.classList.toggle("opacity-50", isLoading);
+    if (tableCard) tableCard.classList.toggle("opacity-80", isLoading);
+    if (mobileList) mobileList.classList.toggle("opacity-90", isLoading);
     if (pagination) pagination.classList.toggle("pointer-events-none", isLoading);
+
+    if (isLoading) {
+      renderTableSkeletonRows();
+      renderCardSkeletonRows();
+    }
   }
 
   function renderEmptyState() {
@@ -94,6 +146,11 @@
     const body = document.getElementById("staff-table-body");
     const mobile = document.getElementById("staff-card-list");
     if (!empty || !body || !mobile) return;
+
+    if (state.isLoading) {
+      empty.classList.add("hidden");
+      return;
+    }
 
     const hasData = state.records.length > 0;
     empty.classList.toggle("hidden", hasData);
@@ -106,8 +163,11 @@
   const AVATAR_SVG = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' fill='%23e2e8f0' rx='8'/%3E%3Ccircle cx='60' cy='46' r='22' fill='%2394a3b8'/%3E%3Cellipse cx='60' cy='96' rx='34' ry='22' fill='%2394a3b8'/%3E%3C/svg%3E`;
 
   function thumbUrl(driveUrl, size = 120) {
-    const id = driveUrl ? window.driveLinks.extractFileId(driveUrl) : null;
-    return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w${size}-h${size}` : "";
+    if (!driveUrl) return "";
+    if (window.driveLinks && typeof window.driveLinks.toDisplayUrl === "function") {
+      return window.driveLinks.toDisplayUrl(driveUrl, size);
+    }
+    return String(driveUrl || "").trim();
   }
 
   function profileLink(id) {
@@ -737,20 +797,16 @@
       const preview = hasAttachment ? window.driveLinks.toPreviewUrl(rawUrl) : "";
       const download = hasAttachment ? window.driveLinks.toDownloadUrl(rawUrl) : "";
       const fileName = buildDownloadFileName(staff, doc.key);
-      const isValid =
-        hasAttachment &&
-        preview &&
-        preview !== rawUrl &&
-        download &&
-        download !== rawUrl;
+      const isValid = hasAttachment && window.driveLinks.isSupportedImageSource(rawUrl);
+      const allowCopyLink = /^https?:\/\//i.test(rawUrl);
 
       return `<div class="flex flex-wrap gap-2 items-center p-3 bg-slate-50 rounded-xl border border-slate-200">
         <span class="font-semibold text-slate-700 min-w-20 text-sm">${doc.label}</span>
         ${
           isValid
             ? `<a class="btn btn-xs btn-outline" href="${preview}" target="_blank" rel="noopener">Preview</a>
-               <a class="btn btn-xs bg-slate-800 text-white border-none hover:bg-slate-700" href="${download}" download="${fileName}" target="_blank" rel="noopener">Download</a>
-               <button class="btn btn-xs btn-outline text-orange-600 border-orange-200" data-share="${preview}">Copy Link</button>`
+              <a class="btn btn-xs bg-slate-800 text-white border-none hover:bg-slate-700" href="${download}" download="${fileName}" target="_blank" rel="noopener">Download</a>
+              ${allowCopyLink ? `<button class="btn btn-xs btn-outline text-orange-600 border-orange-200" data-share="${preview}">Copy Link</button>` : ""}`
             : `<span class="text-xs font-semibold text-slate-500">No Attachments</span>`
         }
       </div>`;

@@ -11,6 +11,7 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.22/dist/full.min.css" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } };</script>
+  <link rel="icon" type="image/png" href="logo.png" />
   <link rel="stylesheet" href="assets/css/app.css" />
 </head>
 
@@ -19,7 +20,10 @@
 
       <!-- Topbar -->
       <header class="topbar">
-        <span class="topbar-brand">RANGA ELECTRICALS</span>
+        <span class="topbar-brand">
+          <img src="logo.png" alt="Ranga Electricals Logo" />
+          <span>RANGA ELECTRICALS</span>
+        </span>
         <div class="flex-1"></div>
         <nav class="topbar-nav" aria-label="Primary">
           <a href="dashboard.html" class="topbar-link active">Dashboard</a>
@@ -72,9 +76,13 @@
                 <path
                   d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
               </svg></div>
-            <div>
+            <div class="stat-content">
               <div class="stat-label">Total Staff</div>
               <div class="stat-value" id="stat-total">—</div>
+              <div class="stat-meta-row">
+                <span id="stat-total-meta" class="stat-meta">All active staff records</span>
+                <span id="stat-total-chip" class="stat-chip">Live</span>
+              </div>
             </div>
           </div>
           <div class="stat-card stat-drivers shadow-sm" style="animation-delay:.1s">
@@ -82,9 +90,13 @@
                 <path
                   d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5H6.5c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z" />
               </svg></div>
-            <div>
+            <div class="stat-content">
               <div class="stat-label">Drivers</div>
               <div class="stat-value" id="stat-drivers">—</div>
+              <div class="stat-meta-row">
+                <span id="stat-drivers-meta" class="stat-meta">0% workforce share</span>
+                <span id="stat-drivers-chip" class="stat-chip">Role</span>
+              </div>
             </div>
           </div>
           <div class="stat-card stat-elec shadow-sm" style="animation-delay:.2s">
@@ -92,9 +104,13 @@
                 <path
                   d="M13 2h-2v3h2V2zm0 16h-2v3h2v-3zM7 5.5L4.929 3.429 3.515 4.843 5.585 6.914 7 5.5zm8 8L12.93 11.43l-1.414 1.414 2.071 2.071 1.414-1.415z" />
               </svg></div>
-            <div>
+            <div class="stat-content">
               <div class="stat-label">Electricians</div>
               <div class="stat-value" id="stat-electricians">—</div>
+              <div class="stat-meta-row">
+                <span id="stat-electricians-meta" class="stat-meta">0% workforce share</span>
+                <span id="stat-electricians-chip" class="stat-chip">Role</span>
+              </div>
             </div>
           </div>
           <div class="stat-card stat-new shadow-sm" style="animation-delay:.3s">
@@ -102,10 +118,125 @@
                 <path
                   d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" />
               </svg></div>
-            <div>
-              <div class="stat-label">New (30d)</div>
+            <div class="stat-content">
+              <div class="stat-label">New (This Month)</div>
               <div class="stat-value" id="stat-new">—</div>
+              <div class="stat-meta-row">
+                <span id="stat-new-meta" class="stat-meta">0% monthly intake</span>
+                <span id="stat-new-chip" class="stat-chip">Growth</span>
+              </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Insights -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+          <div class="sys-card xl:col-span-1">
+            <div class="sys-card-header">
+              <div class="card-icon bg-indigo-50">
+                <svg class="w-5 h-5 text-indigo-600" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
+                </svg>
+              </div>
+              <h3>Designation Breakdown</h3>
+              <span id="dashboard-role-count" class="ml-auto text-xs text-slate-500">—</span>
+            </div>
+            <div class="sys-card-body">
+              <div id="dashboard-designation-breakdown" class="space-y-3"></div>
+            </div>
+          </div>
+
+          <div class="sys-card xl:col-span-1">
+            <div class="sys-card-header">
+              <div class="card-icon bg-emerald-50">
+                <svg class="w-5 h-5 text-emerald-600" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14l-4-4 1.41-1.41L11 13.17l5.59-5.59L18 9l-7 7z" />
+                </svg>
+              </div>
+              <h3>Data Quality Health</h3>
+            </div>
+            <div class="sys-card-body space-y-3" id="dashboard-quality-health">
+              <div>
+                <div class="flex items-center justify-between text-xs font-semibold text-slate-600 mb-1">
+                  <span>Photo Coverage</span>
+                  <span id="quality-photo-text">—</span>
+                </div>
+                <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                  <div id="quality-photo-bar" class="h-full bg-blue-500 transition-all duration-500" style="width:0%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between text-xs font-semibold text-slate-600 mb-1">
+                  <span>Aadhaar Docs</span>
+                  <span id="quality-aadhaar-text">—</span>
+                </div>
+                <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                  <div id="quality-aadhaar-bar" class="h-full bg-teal-500 transition-all duration-500" style="width:0%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between text-xs font-semibold text-slate-600 mb-1">
+                  <span>License Docs</span>
+                  <span id="quality-license-text">—</span>
+                </div>
+                <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                  <div id="quality-license-bar" class="h-full bg-amber-500 transition-all duration-500" style="width:0%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between text-xs font-semibold text-slate-600 mb-1">
+                  <span>Emergency Details</span>
+                  <span id="quality-emergency-text">—</span>
+                </div>
+                <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                  <div id="quality-emergency-bar" class="h-full bg-rose-500 transition-all duration-500" style="width:0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sys-card xl:col-span-1">
+            <div class="sys-card-header">
+              <div class="card-icon bg-violet-50">
+                <svg class="w-5 h-5 text-violet-600" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 8V4l-8 8 8 8v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z" />
+                </svg>
+              </div>
+              <h3>Actionable Insights</h3>
+            </div>
+            <div class="sys-card-body space-y-2 text-sm">
+              <div class="flex justify-between items-center rounded-xl border border-slate-200 px-3 py-2 bg-slate-50">
+                <span class="font-semibold text-slate-700">Missing Profile Photos</span>
+                <span id="insight-missing-photo" class="badge badge-error badge-sm">—</span>
+              </div>
+              <div class="flex justify-between items-center rounded-xl border border-slate-200 px-3 py-2 bg-slate-50">
+                <span class="font-semibold text-slate-700">Missing Aadhaar Docs</span>
+                <span id="insight-missing-aadhaar" class="badge badge-warning badge-sm">—</span>
+              </div>
+              <div class="flex justify-between items-center rounded-xl border border-slate-200 px-3 py-2 bg-slate-50">
+                <span class="font-semibold text-slate-700">Missing Emergency Details</span>
+                <span id="insight-missing-emergency" class="badge badge-neutral badge-sm">—</span>
+              </div>
+              <div class="flex justify-between items-center rounded-xl border border-slate-200 px-3 py-2 bg-slate-50">
+                <span class="font-semibold text-slate-700">Birthdays This Month</span>
+                <span id="insight-birthday-month" class="badge badge-success badge-sm">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Entries -->
+        <div class="sys-card animate-fadeIn delay-300">
+          <div class="sys-card-header">
+            <div class="card-icon bg-sky-50">
+              <svg class="w-5 h-5 text-sky-600" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V9h14v10z" />
+              </svg>
+            </div>
+            <h3>Recent Staff Entries</h3>
+          </div>
+          <div class="sys-card-body">
+            <div id="dashboard-recent-list" class="space-y-2"></div>
           </div>
         </div>
 

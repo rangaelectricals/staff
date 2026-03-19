@@ -9,7 +9,6 @@
 
   async function request(action, payload, method) {
     assertApiUrl();
-
     if (method === "GET") {
       const params = new URLSearchParams({ action, ...payload });
       const res = await fetch(`${API_BASE_URL}?${params.toString()}`);

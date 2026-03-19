@@ -11,6 +11,7 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.22/dist/full.min.css" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } };</script>
+  <link rel="icon" type="image/png" href="logo.png" />
   <link rel="stylesheet" href="assets/css/app.css" />
 </head>
 
@@ -19,7 +20,10 @@
 
       <!-- Topbar -->
       <header class="topbar">
-        <span class="topbar-brand">RANGA ELECTRICALS</span>
+        <span class="topbar-brand">
+          <img src="logo.png" alt="Ranga Electricals Logo" />
+          <span>RANGA ELECTRICALS</span>
+        </span>
         <div class="flex-1"></div>
         <nav class="topbar-nav" aria-label="Primary">
           <a href="dashboard.html" class="topbar-link">Dashboard</a>
